@@ -3,12 +3,11 @@
 mod opts;
 mod tablegen;
 mod instance_details;
-mod cache;
 
 use anyhow::Result;
 use opts::Opts;
 use clap::Parser;
-use instance_details::InstanceDetails;
+use instance_details::InstanceSet;
 use tablegen::TableGenerator;
 
 #[tokio::main]
@@ -23,18 +22,7 @@ async fn main() -> Result<()> {
         }
     }
 
-    let aws_config = aws_config::load_from_env().await;
-    let aws_client = aws_sdk_ec2::Client::new(&aws_config);
-    let response = aws_client.describe_instances().send().await?;
-    let instances = response
-        .reservations()
-        .into_iter()
-        .flat_map(|reservation| reservation.instances())
-        .map(InstanceDetails::from_instance)
-        .flat_map(Result::ok)
-        .collect::<Vec<_>>();
-
-    TableGenerator::generate(&instances).print();
+    TableGenerator::generate(&instance_set).print();
 
     Ok(())
 }
