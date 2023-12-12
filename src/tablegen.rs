@@ -1,5 +1,5 @@
 use crate::instance_details::InstanceSet;
-use prettytable::{Cell, Row, Table};
+use prettytable::{format, Cell, Row, Table};
 
 pub struct TableGenerator {
     table: Table,
@@ -8,8 +8,10 @@ pub struct TableGenerator {
 impl TableGenerator {
     pub fn generate(instance_set: &InstanceSet) -> Self {
         let mut table = Table::new();
+        table.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
+
         /* Header Row */
-        table.add_row(row!["Name", "Public IP", "Private IP", "Instance ID"]);
+        table.set_titles(row!["Name", "Public IP", "Private IP", "Instance ID"]);
 
         /* Data */
         instance_set
@@ -17,11 +19,12 @@ impl TableGenerator {
             .clone()
             .into_iter()
             .for_each(|instance| {
+                let instance_clone = instance.clone();
                 table.add_row(Row::new(vec![
-                    Cell::new(&instance.instance_name.clone().unwrap_or("".to_string())),
-                    Cell::new(&instance.public_ip.clone().unwrap_or("".to_string())),
-                    Cell::new(&instance.private_ip.clone().unwrap_or("".to_string())),
-                    Cell::new(&instance.instance_id.clone().unwrap_or("".to_string())),
+                    Cell::new(&instance_clone.instance_name.unwrap_or("".to_string())),
+                    Cell::new(&instance_clone.public_ip.unwrap_or("".to_string())),
+                    Cell::new(&instance_clone.private_ip.unwrap_or("".to_string())),
+                    Cell::new(&instance_clone.instance_id.unwrap_or("".to_string())),
                 ]));
             });
 

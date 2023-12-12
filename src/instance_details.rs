@@ -1,7 +1,6 @@
 use anyhow::Result;
 use aws_sdk_ec2::types::Instance;
 use serde::{Deserialize, Serialize};
-use tokio::runtime;
 
 pub const CACHE_FILE: &str = "/tmp/blaze_ssh_cache.json";
 
@@ -13,12 +12,6 @@ pub struct InstanceSet {
 impl InstanceSet {
     pub fn new(instances: Vec<InstanceDetails>) -> Result<Self> {
         Ok(Self { instances })
-    }
-
-    fn fetch_cache() -> Result<Self> {
-        std::fs::read_to_string(CACHE_FILE)
-            .and_then(|cache| serde_json::from_str::<InstanceSet>(&cache).map_err(|e| e.into()))
-            .map_err(|e| e.into())
     }
 
     async fn fetch_remote() -> Result<Self> {
@@ -33,22 +26,29 @@ impl InstanceSet {
             .flat_map(Result::ok)
             .collect::<Vec<_>>();
 
-        InstanceSet::new(instances)
+        let instance_set = InstanceSet::new(instances)?;
+        instance_set.write()?;
+
+        Ok(instance_set)
     }
 
-    pub async fn fetch(cache: bool) -> Result<Self> {
-        match cache {
-            true => std::fs::read_to_string(CACHE_FILE)
-                .and_then(|cache| serde_json::from_str(&cache).map_err(|e| e.into()))
-                .or_else(|_| {
-                    let rt = runtime::Runtime::new().unwrap();
-                    rt.block_on(Self::fetch_remote())
-                }),
-            false => {
-                let rt = runtime::Runtime::new().unwrap();
-                rt.block_on(Self::fetch_remote())
+    pub async fn fetch(use_cache: bool) -> Result<Self> {
+        match use_cache {
+            true => {
+                let cache_result = std::fs::read_to_string(CACHE_FILE);
+                match cache_result {
+                    Ok(cache) => serde_json::from_str(&cache).map_err(|e| e.into()),
+                    Err(_e) => Self::fetch_remote().await,
+                }
             }
+            false => Self::fetch_remote().await,
         }
+    }
+
+    pub fn write(&self) -> Result<()> {
+        std::fs::write(CACHE_FILE, serde_json::to_string(self)?)?;
+
+        Ok(())
     }
 }
 

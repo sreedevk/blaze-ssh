@@ -1,14 +1,17 @@
-#[macro_use] extern crate prettytable;
+#[macro_use]
+extern crate prettytable;
 
+mod instance_details;
 mod opts;
 mod tablegen;
-mod instance_details;
 
 use anyhow::Result;
-use opts::Opts;
 use clap::Parser;
 use instance_details::InstanceSet;
+use opts::Opts;
 use tablegen::TableGenerator;
+
+const USE_CACHE: bool = true;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -18,11 +21,10 @@ async fn main() -> Result<()> {
             println!("Connecting to {}", opts.search);
         }
         opts::Operations::List(opts) => {
-            println!("Listing instances with search string {}", opts.search);
+            let instance_set = InstanceSet::fetch(USE_CACHE).await?;
+            TableGenerator::generate(&instance_set).print();
         }
     }
-
-    TableGenerator::generate(&instance_set).print();
 
     Ok(())
 }
