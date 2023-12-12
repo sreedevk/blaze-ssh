@@ -22,7 +22,8 @@ async fn main() -> Result<()> {
         }
         opts::Operations::List(opts) => {
             let instance_set = InstanceSet::fetch(USE_CACHE).await?;
-            TableGenerator::generate(&instance_set).print();
+            let filtered_instance_set = instance_set.filter(&opts.search)?;
+            TableGenerator::generate(&filtered_instance_set).print();
         }
     }
 

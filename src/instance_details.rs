@@ -50,6 +50,19 @@ impl InstanceSet {
 
         Ok(())
     }
+
+    pub fn filter(&self, search: &str) -> Result<Self> {
+        let mut instances = self.instances.clone();
+        instances.retain(|instance| {
+            instance
+                .instance_name
+                .clone()
+                .unwrap_or("".to_string())
+                .contains(search)
+        });
+
+        Self::new(instances)
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
