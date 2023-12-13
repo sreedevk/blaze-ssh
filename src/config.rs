@@ -11,6 +11,9 @@ pub struct Config {
     #[serde(rename = "private-key")]
     pub private_key: Option<PathBuf>,
     pub bastion: Option<String>,
+    pub port: Option<u16>,
+    #[serde(rename = "address-type")]
+    pub address_type: Option<String>
 }
 
 #[derive(Deserialize, Serialize, Debug)]

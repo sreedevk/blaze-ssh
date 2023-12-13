@@ -84,6 +84,17 @@ impl InstanceDetails {
         })
     }
 
+    pub fn display_name(&self) -> Result<String> {
+        let cloned_instance = self.clone();
+        Ok(format!(
+            "{} | priv_ip: {}, pub_ip: {} [{}]",
+            cloned_instance.instance_name.unwrap_or_default(),
+            cloned_instance.private_ip.unwrap_or_default(),
+            cloned_instance.public_ip.unwrap_or_default(),
+            cloned_instance.instance_id.unwrap_or_default()
+        ))
+    }
+
     fn extract_instance_name(instance: &Instance) -> Option<String> {
         instance
             .tags()
