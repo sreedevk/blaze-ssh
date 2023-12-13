@@ -31,6 +31,16 @@ Options:
   -h, --help  Print help
 ```
 
+## Configuration
+```toml
+[config]
+private-key = "~/.ssh/id_rsa.pem"
+default-user = "ec2-user"
+bastion = "nil"
+port = 22
+address-type = "private"
+```
+
 ## Examples
 
 ### Listing Instances
@@ -42,6 +52,30 @@ $ blaze-ssh list staging
 
 ### Connecting to an Instance
 ```bash
-# Interactively select an instance to connect to from a list of instances that contain the term "production" in their "Name" tag
-$ blaze-ssh connect production
+# Interactively select an instance to connect to from a list of instances that contain the term "production-1" in their "Name" tag
+$ blaze-ssh connect production-1
+
+# Connecting with a non default (configured in ~/.config/blaze/config.toml) private key
+$ blaze-ssh connect production-1 --key ~/.ssh/production.pem
+
+# Connecting with a non default (configured in ~/.config/blaze/config.toml) user
+$ blaze-ssh connect production-1 --user ubuntu
+
+# Connecting with a non default (configured in ~/.config/blaze/config.toml) port
+$ blaze-ssh connect production-1 --port 2222
+
+# Connecting with a non default bastion host
+$ blaze-ssh connect production-1 --bastion "user@192.168.1.1"
+
+# Connecting with a non default (configured in ~/.config/blaze/config.toml) address type
+# Options are "public" & "private"
+$ blaze-ssh connect production-1 --address-type public
+
+# Connect using a custom config
+$ blaze-ssh connect production-1 --config ~/custom-config.toml
+
+# Disable use of cached instance information (stored in /tmp/blaze_ssh_cache.json)
+$ blaze-ssh connect production-1 --use-cache=false
 ```
+
+
