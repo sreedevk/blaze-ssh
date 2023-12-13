@@ -1,5 +1,3 @@
-#![allow(unused)]
-
 use crate::instance_details::InstanceDetails;
 use crate::{config::Config, opts::ConnectOptions};
 
@@ -31,11 +29,19 @@ impl CommandGenerator {
     }
 
     fn jump_host(&self) -> Result<String> {
-        Ok(String::new())
+        match self.opts.jumphost.clone() {
+            Some(jumphost) => Ok(format!("-J {}", jumphost)),
+            None => Ok(String::new()),
+        }
     }
 
     fn key(&self) -> Result<String> {
-        Ok(String::new())
+        let key = self.opts.key.clone().or(self.config.private_key.clone());
+
+        match key {
+            Some(key) => Ok(format!("-i {}", key.to_str().unwrap())),
+            None => Ok(String::new()),
+        }
     }
 
     fn address(&self) -> Result<String> {

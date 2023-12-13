@@ -32,8 +32,16 @@ async fn main() -> Result<()> {
             let instance = ui.run()?;
             let cmd = cmdgen::CommandGenerator::new(&opts, config, instance)?;
             let ssh_command = cmd.generate()?;
+            let ssh_process = Command::new(ssh_command).spawn();
 
-            dbg!(ssh_command);
+            match ssh_process {
+                Ok(mut ssh_process) => {
+                    ssh_process.wait()?;
+                }
+                Err(e) => {
+                    eprintln!("[blaze-ssh] ERR: {}", e);
+                }
+            }
         }
         opts::Operations::List(opts) => {
             let instance_set = InstanceSet::fetch(USE_CACHE).await?;
