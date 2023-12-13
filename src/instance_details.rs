@@ -20,7 +20,7 @@ impl InstanceSet {
         let response = aws_client.describe_instances().send().await?;
         let instances = response
             .reservations()
-            .into_iter()
+            .iter()
             .flat_map(|reservation| reservation.instances())
             .map(InstanceDetails::from_instance)
             .flat_map(Result::ok)
