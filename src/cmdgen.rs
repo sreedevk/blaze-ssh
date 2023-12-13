@@ -47,11 +47,11 @@ impl CommandGenerator {
 
         match address_type {
             Some(address_type) => match address_type.as_str() {
-                "public" => Ok(self.instance.public_ip.clone().unwrap()),
-                "private" => Ok(self.instance.private_ip.clone().unwrap()),
+                "public" => Ok(self.instance.public_ip.clone().unwrap_or_default()),
+                "private" => Ok(self.instance.private_ip.clone().unwrap_or_default()),
                 _ => Err(anyhow::anyhow!("Invalid address type")),
             },
-            None => Ok(self.instance.private_ip.clone().unwrap()),
+            None => Ok(self.instance.private_ip.clone().unwrap_or_default()),
         }
     }
 

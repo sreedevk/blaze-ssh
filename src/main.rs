@@ -30,10 +30,10 @@ async fn main() -> Result<()> {
             let filtered_instance_set = instance_set.filter(&opts.search)?;
             let ui = Ui::new(filtered_instance_set)?;
             let instance = ui.run()?;
-            // let cmd = cmdgen::CommandGenerator::new(&opts, config, instance)?;
-            // let ssh_command = cmd.generate()?;
+            let cmd = cmdgen::CommandGenerator::new(&opts, config, instance)?;
+            let ssh_command = cmd.generate()?;
 
-            // dbg!(ssh_command);
+            dbg!(ssh_command);
         }
         opts::Operations::List(opts) => {
             let instance_set = InstanceSet::fetch(USE_CACHE).await?;
