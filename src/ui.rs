@@ -89,7 +89,7 @@ impl Ui {
         let selected_instance_result = selected_instance
             .borrow()
             .as_ref()
-            .unwrap_or_else(|| &default_instance_result)
+            .unwrap_or(&default_instance_result)
             .clone();
 
         Ok(selected_instance_result)
