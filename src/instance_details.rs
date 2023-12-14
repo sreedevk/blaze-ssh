@@ -2,6 +2,8 @@ use anyhow::Result;
 use aws_sdk_ec2::types::Instance;
 use serde::{Deserialize, Serialize};
 
+use crate::opts::Opts;
+
 pub const CACHE_FILE: &str = "/tmp/blaze_ssh_cache.json";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -32,16 +34,16 @@ impl InstanceSet {
         Ok(instance_set)
     }
 
-    pub async fn fetch(use_cache: bool) -> Result<Self> {
-        match use_cache {
-            true => {
+    pub async fn fetch(opts: &Opts) -> Result<Self> {
+        match opts.no_cache {
+            false => {
                 let cache_result = std::fs::read_to_string(CACHE_FILE);
                 match cache_result {
                     Ok(cache) => serde_json::from_str(&cache).map_err(|e| e.into()),
                     Err(_e) => Self::fetch_remote().await,
                 }
             }
-            false => Self::fetch_remote().await,
+            true => Self::fetch_remote().await,
         }
     }
 

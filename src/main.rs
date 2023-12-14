@@ -17,16 +17,13 @@ use opts::Opts;
 use tablegen::TableGenerator;
 use ui::Ui;
 
-// TODO: Make this configurable
-const USE_CACHE: bool = true;
-
 #[tokio::main]
 async fn main() -> Result<()> {
     let cli = Opts::parse();
-    match cli.operation {
+    match cli.clone().operation {
         opts::Operations::Connect(opts) => {
-            let config = config::Config::load(opts.config.clone())?;
-            let instance_set = InstanceSet::fetch(USE_CACHE).await?;
+            let config = config::Config::load(opts.clone().config)?;
+            let instance_set = InstanceSet::fetch(&cli).await?;
             let filtered_instance_set = instance_set.filter(&opts.search)?;
             let ui = Ui::new(filtered_instance_set)?;
             let instance = ui.run()?;
@@ -39,7 +36,7 @@ async fn main() -> Result<()> {
             ssh_command.spawn()?;
         }
         opts::Operations::List(opts) => {
-            let instance_set = InstanceSet::fetch(USE_CACHE).await?;
+            let instance_set = InstanceSet::fetch(&cli).await?;
             let filtered_instance_set = instance_set.filter(&opts.search)?;
             TableGenerator::generate(&filtered_instance_set).print();
         }

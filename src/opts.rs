@@ -22,10 +22,6 @@ pub struct ConnectOptions {
     #[clap(short, long)]
     pub address_type: Option<String>,
 
-    /// usecache
-    #[clap(long, default_value = "false")]
-    pub no_cache: bool,
-
     /// jumphost
     #[clap(short, long)]
     pub jumphost: Option<String>,
@@ -46,8 +42,12 @@ pub enum Operations {
     List(ListOptions),
 }
 
-#[derive(Parser, Debug)]
+#[derive(Parser, Debug, Clone)]
 pub struct Opts {
+    /// usecache
+    #[clap(long, default_value = "false")]
+    pub no_cache: bool,
+
     #[clap(subcommand)]
     pub operation: Operations,
 }
