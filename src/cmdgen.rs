@@ -22,7 +22,7 @@ impl CommandGenerator {
 
     pub fn generate<'a>(&self, cmd: &'a mut Command) -> Result<&'a mut Command> {
         let ssh_command = vec![
-            "ssh".to_string(),
+            String::from("ssh -t"),
             format!("{}@{}", self.user()?, self.address()?),
             self.key()?,
             self.jump_host()?,

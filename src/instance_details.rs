@@ -67,7 +67,7 @@ impl InstanceSet {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash, Default)]
 pub struct InstanceDetails {
     pub public_ip: Option<String>,
     pub private_ip: Option<String>,

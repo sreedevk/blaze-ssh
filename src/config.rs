@@ -13,7 +13,7 @@ pub struct Config {
     pub bastion: Option<String>,
     pub port: Option<u16>,
     #[serde(rename = "address-type")]
-    pub address_type: Option<String>
+    pub address_type: Option<String>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -22,12 +22,15 @@ struct ConfigFile {
 }
 
 impl Config {
-    pub fn load(path: Option<PathBuf>) -> Result<Self> {
-        let config_path_string = path
+    pub fn get_config_path(path: Option<PathBuf>) -> Result<String> {
+        Ok(path
             .and_then(|cfg_path| Some(String::from(cfg_path.to_str()?)))
-            .unwrap_or(CONFIG_PATH.to_string());
+            .unwrap_or(CONFIG_PATH.to_string()))
+    }
 
-        let config_path = PathBuf::from(shellexpand::tilde(&config_path_string).to_string());
+    pub fn load(path: Option<PathBuf>) -> Result<Self> {
+        let config_path =
+            PathBuf::from(shellexpand::tilde(&Self::get_config_path(path)?).to_string());
         let raw_config = std::fs::read_to_string(config_path)?;
 
         Ok(toml::from_str::<ConfigFile>(&raw_config)?.config)

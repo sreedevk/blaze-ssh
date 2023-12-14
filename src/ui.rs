@@ -3,9 +3,13 @@ use std::rc::Rc;
 
 use crate::instance_details::{InstanceDetails, InstanceSet};
 use anyhow::Result;
-use cursive::view::{Margins, Nameable};
-use cursive::views::{Dialog, SelectView};
-use cursive::{Cursive, CursiveExt};
+
+use cursive::{
+    theme::{BaseColor, Color, Palette, PaletteColor, Theme},
+    view::{Margins, Nameable},
+    views::{Dialog, SelectView},
+    {Cursive, CursiveExt},
+};
 
 pub struct Ui {
     pub instance_set: InstanceSet,
@@ -14,6 +18,17 @@ pub struct Ui {
 impl Ui {
     pub fn new(instance_set: InstanceSet) -> Result<Self> {
         Ok(Self { instance_set })
+    }
+
+    pub fn theme() -> Result<Theme> {
+        let mut palette = Palette::default();
+        palette[PaletteColor::Background] = Color::Dark(BaseColor::Black);
+
+        Ok(Theme {
+            shadow: true,
+            borders: cursive::theme::BorderStyle::Simple,
+            palette,
+        })
     }
 
     pub fn run(&self) -> Result<InstanceDetails> {
@@ -67,9 +82,16 @@ impl Ui {
         );
 
         /* Ui Assembly */
+        app.set_theme(Self::theme()?);
         app.run();
 
-        let selected_instance_result = selected_instance.borrow().as_ref().unwrap().clone();
+        let default_instance_result = InstanceDetails::default();
+        let selected_instance_result = selected_instance
+            .borrow()
+            .as_ref()
+            .unwrap_or_else(|| &default_instance_result)
+            .clone();
+
         Ok(selected_instance_result)
     }
 }
