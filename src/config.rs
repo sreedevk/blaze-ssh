@@ -3,6 +3,16 @@ use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
 pub const CONFIG_PATH: &str = "~/.config/blaze/config.toml";
+#[allow(dead_code)]
+pub const DEFAULT: &str = r#"
+# Rename this section to "config" to use this as your default config
+[config.sample]
+    private-key = "~/.ssh/tunecore1.pem"
+    default-user = "ec2-user"
+    bastion = "nil"
+    port = 22
+    address-type = "private"
+"#;
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Config {
@@ -28,6 +38,16 @@ impl Config {
             .unwrap_or(CONFIG_PATH.to_string()))
     }
 
+    #[allow(dead_code)]
+    pub fn generate_default_config() -> Result<()> {
+        std::fs::write(
+            PathBuf::from(shellexpand::tilde(CONFIG_PATH).to_string()),
+            DEFAULT,
+        )?;
+
+        Ok(())
+    }
+
     pub fn load(path: Option<PathBuf>) -> Result<Self> {
         let config_path =
             PathBuf::from(shellexpand::tilde(&Self::get_config_path(path)?).to_string());
@@ -36,5 +56,3 @@ impl Config {
         Ok(toml::from_str::<ConfigFile>(&raw_config)?.config)
     }
 }
-
-// TODO: GENERATE DEFAULT CONFIG IF DOES NOT EXIST

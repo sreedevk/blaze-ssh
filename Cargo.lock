@@ -476,7 +476,7 @@ checksum = "327762f6e5a765692301e5bb513e0d9fef63be86bbc14528052b1cd3e6f03e07"
 
 [[package]]
 name = "blaze-ssh"
-version = "0.1.0"
+version = "0.0.2"
 dependencies = [
  "anyhow",
  "aws-config",

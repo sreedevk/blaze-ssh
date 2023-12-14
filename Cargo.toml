@@ -1,9 +1,15 @@
 [package]
 name = "blaze-ssh"
-version = "0.1.0"
+version = "0.0.2"
 edition = "2021"
 authors = ["Sreedev Kodichath <sreedevpadmakumar@gmail.com>"]
 description = "A Configurable CLI tool that helps you ssh into aws ec2 instances without leaving the terminal"
+rust-version = "1.74.0"
+repository = "https://github.com/sreedevk/blaze-ssh"
+readme = "README.md"
+keywords = ["aws", "ssh", "ec2", "terminal", "cli", "rust"]
+categories = ["cli", "terminal", "aws", "ssh"]
+license = "GPL-3.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
