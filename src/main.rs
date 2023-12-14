@@ -24,7 +24,7 @@ async fn main() -> Result<()> {
         opts::Operations::Connect(opts) => {
             let config = config::Config::load(opts.clone().config)?;
             let instance_set = InstanceSet::fetch(&cli).await?;
-            let filtered_instance_set = instance_set.filter(&opts.search)?;
+            let filtered_instance_set = instance_set.filter(opts.clone().search)?;
             let ui = Ui::new(filtered_instance_set)?;
             let instance = ui.run()?;
 
@@ -33,7 +33,7 @@ async fn main() -> Result<()> {
             }
 
             /* run ssh */
-            let command_generator = cmdgen::CommandGenerator::new(&opts, config, instance)?;
+            let command_generator = cmdgen::CommandGenerator::new(&opts.clone(), config, instance)?;
             let mut command = Command::new("sh");
             let ssh_command = command_generator.generate(&mut command)?;
 
@@ -41,7 +41,7 @@ async fn main() -> Result<()> {
         }
         opts::Operations::List(opts) => {
             let instance_set = InstanceSet::fetch(&cli).await?;
-            let filtered_instance_set = instance_set.filter(&opts.search)?;
+            let filtered_instance_set = instance_set.filter(opts.search)?;
             TableGenerator::generate(&filtered_instance_set).print();
         }
     }

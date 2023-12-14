@@ -7,7 +7,7 @@ use anyhow::Result;
 use cursive::{
     theme::{BaseColor, Color, Palette, PaletteColor, Theme},
     view::{Margins, Nameable},
-    views::{Dialog, SelectView},
+    views::{Dialog, ScrollView, SelectView},
     {Cursive, CursiveExt},
 };
 
@@ -45,7 +45,10 @@ impl Ui {
                 instance_select.add_item(instance.display_name().unwrap_or_default(), instance);
             });
 
-        let instance_select_dialog = Dialog::around(instance_select.with_name("instance_select"))
+        instance_select.set_autojump(true);
+
+        let instance_scrollview = ScrollView::new(instance_select.with_name("instance_select"));
+        let instance_select_dialog = Dialog::around(instance_scrollview)
             .title("Select an instance")
             .padding(Margins::lrtb(1, 1, 1, 1));
 

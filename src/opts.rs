@@ -5,7 +5,7 @@ use clap::{Parser, Subcommand};
 #[derive(Parser, Debug, Clone)]
 pub struct ConnectOptions {
     /// Search String to filter instances by
-    pub search: String,
+    pub search: Option<String>,
 
     /// ssh username
     #[clap(short, long)]
@@ -33,12 +33,14 @@ pub struct ConnectOptions {
 
 #[derive(Parser, Debug, Clone)]
 pub struct ListOptions {
-    pub search: String,
+    pub search: Option<String>,
 }
 
 #[derive(Debug, Clone, Subcommand)]
 pub enum Operations {
+    #[clap(name = "connect", alias = "c")]
     Connect(ConnectOptions),
+    #[clap(name = "list", alias = "l")]
     List(ListOptions),
 }
 

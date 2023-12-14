@@ -11,6 +11,10 @@ keywords = ["aws", "ssh", "ec2", "terminal", "cli", "rust"]
 categories = ["cli", "terminal", "aws", "ssh"]
 license = "GPL-3.0"
 
+[[bin]]
+name = "blssh"
+path = "src/main.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]

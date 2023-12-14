@@ -53,17 +53,24 @@ impl InstanceSet {
         Ok(())
     }
 
-    pub fn filter(&self, search: &str) -> Result<Self> {
-        let mut instances = self.instances.clone();
-        instances.retain(|instance| {
-            instance
-                .instance_name
-                .clone()
-                .unwrap_or("".to_string())
-                .contains(search)
-        });
-
-        Self::new(instances)
+    pub fn filter(&self, search: Option<String>) -> Result<Self> {
+        if search.is_none() {
+            return Self::new(self.instances.clone());
+        } else {
+            Self::new(
+                self.instances
+                    .clone()
+                    .into_iter()
+                    .filter(|instance| {
+                        instance
+                            .instance_name
+                            .clone()
+                            .unwrap_or("".to_string())
+                            .contains(search.clone().unwrap().as_str())
+                    })
+                    .collect::<Vec<_>>(),
+            )
+        }
     }
 }
 
