@@ -32,7 +32,11 @@ impl CommandGenerator {
         .collect::<Vec<String>>()
         .join(" ");
 
-        Ok(cmd.arg("-c").arg(ssh_command))
+        Ok(cmd
+            .arg("-c")
+            .arg(ssh_command)
+            .stdin(std::process::Stdio::inherit())
+            .stdout(std::process::Stdio::inherit()))
     }
 
     fn jump_host(&self) -> Result<String> {

@@ -33,7 +33,7 @@ async fn main() -> Result<()> {
             let mut command = Command::new("sh");
             let ssh_command = command_generator.generate(&mut command)?;
 
-            ssh_command.spawn().expect("Failed to execute ssh!");
+            ssh_command.status()?;
         }
         opts::Operations::List(opts) => {
             let instance_set = InstanceSet::fetch(&cli).await?;
