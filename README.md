@@ -75,7 +75,7 @@ $ blaze-ssh connect production-1 --address-type public
 $ blaze-ssh connect production-1 --config ~/custom-config.toml
 
 # Disable use of cached instance information (stored in /tmp/blaze_ssh_cache.json)
-$ blaze-ssh connect production-1 --use-cache=false
+$ blaze-ssh connect production-1 --no-cache
 ```
 
 

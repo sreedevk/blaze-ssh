@@ -33,3 +33,5 @@ impl Config {
         Ok(toml::from_str::<ConfigFile>(&raw_config)?.config)
     }
 }
+
+// TODO: GENERATE DEFAULT CONFIG IF DOES NOT EXIST

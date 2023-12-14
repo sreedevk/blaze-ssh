@@ -2,6 +2,8 @@
 name = "blaze-ssh"
 version = "0.1.0"
 edition = "2021"
+authors = ["Sreedev Kodichath <sreedevpadmakumar@gmail.com>"]
+description = "A Configurable CLI tool that helps you ssh into aws ec2 instances without leaving the terminal"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

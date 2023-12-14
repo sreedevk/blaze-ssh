@@ -1,3 +1,5 @@
+use std::process::Command;
+
 use crate::instance_details::InstanceDetails;
 use crate::{config::Config, opts::ConnectOptions};
 
@@ -18,14 +20,19 @@ impl CommandGenerator {
         })
     }
 
-    pub fn generate(&self) -> Result<String> {
-        Ok(format!(
-            "ssh {}@{} {} {}",
-            self.user()?,
-            self.address()?,
+    pub fn generate<'a>(&self, cmd: &'a mut Command) -> Result<&'a mut Command> {
+        let ssh_command = vec![
+            "ssh".to_string(),
+            format!("{}@{}", self.user()?, self.address()?),
             self.key()?,
-            self.jump_host()?
-        ))
+            self.jump_host()?,
+        ]
+        .into_iter()
+        .filter(|arg| !arg.is_empty())
+        .collect::<Vec<String>>()
+        .join(" ");
+
+        Ok(cmd.arg("-c").arg(ssh_command))
     }
 
     fn jump_host(&self) -> Result<String> {
@@ -39,7 +46,7 @@ impl CommandGenerator {
         let key = self.opts.key.clone().or(self.config.private_key.clone());
 
         match key {
-            Some(key) => Ok(format!("-i {}", key.to_str().unwrap())),
+            Some(key) => Ok(format!("-i {}", shellexpand::tilde(key.to_str().unwrap()))),
             None => Ok(String::new()),
         }
     }

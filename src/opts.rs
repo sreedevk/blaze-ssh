@@ -23,8 +23,8 @@ pub struct ConnectOptions {
     pub address_type: Option<String>,
 
     /// usecache
-    #[clap(long, default_value = "true")]
-    pub use_cache: bool,
+    #[clap(long, default_value = "false")]
+    pub no_cache: bool,
 
     /// jumphost
     #[clap(short, long)]
