@@ -86,14 +86,21 @@ impl InstanceDetails {
         })
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.public_ip.is_none()
+            && self.private_ip.is_none()
+            && self.instance_id.is_none()
+            && self.instance_name.is_none()
+    }
+
     pub fn display_name(&self) -> Result<String> {
         let cloned_instance = self.clone();
         Ok(format!(
-            "{} | priv_ip: {}, pub_ip: {} [{}]",
-            cloned_instance.instance_name.unwrap_or_default(),
-            cloned_instance.private_ip.unwrap_or_default(),
-            cloned_instance.public_ip.unwrap_or_default(),
-            cloned_instance.instance_id.unwrap_or_default()
+            "{:<32} | priv_ip: {:12} | pub_ip: {:>12} | {:<32}",
+            cloned_instance.instance_name.unwrap_or("None".to_string()),
+            cloned_instance.private_ip.unwrap_or("None".to_string()),
+            cloned_instance.public_ip.unwrap_or("None".to_string()),
+            cloned_instance.instance_id.unwrap_or("None".to_string())
         ))
     }
 

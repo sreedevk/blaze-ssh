@@ -28,6 +28,10 @@ async fn main() -> Result<()> {
             let ui = Ui::new(filtered_instance_set)?;
             let instance = ui.run()?;
 
+            if instance.is_empty() {
+                return Ok(());
+            }
+
             /* run ssh */
             let command_generator = cmdgen::CommandGenerator::new(&opts, config, instance)?;
             let mut command = Command::new("sh");
