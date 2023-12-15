@@ -51,6 +51,8 @@ Options:
 ```
 
 ## Configuration
+Currently, blaze-ssh expects to find a config file at `~/.config/blaze/config.toml`. Please make sure to create this file. 
+
 ```toml
 [config]
 private-key = "~/.ssh/id_rsa.pem"
