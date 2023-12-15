@@ -97,4 +97,5 @@ $ blssh --config ~/custom-config.toml connect production-1
 $ blssh --no-cache connect production-1
 ```
 
-
+# Known Issues
+1. When navigating using j/k on the connect ui, the list scroll doesn't work.
