@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
@@ -7,9 +7,9 @@ pub const CONFIG_PATH: &str = "~/.config/blaze/config.toml";
 pub const DEFAULT: &str = r#"
 # Rename this section to "config" to use this as your default config
 [config.sample]
-    private-key = "~/.ssh/tunecore1.pem"
+    private-key = ""
     default-user = "ec2-user"
-    bastion = "nil"
+    bastion = ""
     port = 22
     address-type = "private"
 "#;
@@ -51,8 +51,10 @@ impl Config {
     pub fn load(path: Option<PathBuf>) -> Result<Self> {
         let config_path =
             PathBuf::from(shellexpand::tilde(&Self::get_config_path(path)?).to_string());
-        let raw_config = std::fs::read_to_string(config_path)?;
-
-        Ok(toml::from_str::<ConfigFile>(&raw_config)?.config)
+        let raw_config = std::fs::read_to_string(config_path);
+        match raw_config {
+            Ok(config) => Ok(toml::from_str::<ConfigFile>(&config)?.config),
+            Err(_e) => Err(anyhow!("Config not found at {}", CONFIG_PATH)),
+        }
     }
 }
