@@ -25,10 +25,6 @@ pub struct ConnectOptions {
     /// jumphost
     #[clap(short, long)]
     pub jumphost: Option<String>,
-
-    /// config
-    #[clap(short, long)]
-    pub config: Option<PathBuf>,
 }
 
 #[derive(Parser, Debug, Clone)]
@@ -38,18 +34,25 @@ pub struct ListOptions {
 
 #[derive(Debug, Clone, Subcommand)]
 pub enum Operations {
+    /// connect to an ec2 instances
     #[clap(name = "connect", alias = "c")]
     Connect(ConnectOptions),
+    /// list filtered ec2 instances
     #[clap(name = "list", alias = "l")]
     List(ListOptions),
 }
 
 #[derive(Parser, Debug, Clone)]
 pub struct Opts {
-    /// usecache
+    /// disable using cached ec2 instances list
     #[clap(long, default_value = "false")]
     pub no_cache: bool,
 
+    /// config
+    #[clap(short, long)]
+    pub config: Option<PathBuf>,
+
+    /// operation to perform (list / connect)
     #[clap(subcommand)]
     pub operation: Operations,
 }

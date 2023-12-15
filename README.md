@@ -20,15 +20,34 @@ $ cargo install blaze-ssh
 
 ## Usage
 ```bash
-Usage: blaze-ssh <COMMAND>
+# CLI Help
+Usage: blssh [OPTIONS] <COMMAND>
 
 Commands:
-  connect
-  list
+  connect  connect to an ec2 instances
+  list     list filtered ec2 instances
   help     Print this message or the help of the given subcommand(s)
 
 Options:
-  -h, --help  Print help
+      --no-cache         disable using cached ec2 instances list
+  -c, --config <CONFIG>  config
+  -h, --help             Print help
+
+# Connection Opts
+connect to an ec2 instances
+
+Usage: blssh connect [OPTIONS] [SEARCH]
+
+Arguments:
+  [SEARCH]  Search String to filter instances by
+
+Options:
+  -u, --user <USER>                  ssh username
+  -p, --port <PORT>                  ssh port
+  -k, --key <KEY>                    ssh private key
+  -a, --address-type <ADDRESS_TYPE>
+  -j, --jumphost <JUMPHOST>          jumphost
+  -h, --help                         Print help
 ```
 
 ## Configuration
@@ -47,35 +66,35 @@ address-type = "private"
 
 ```bash
 # Lists all instances that contain the term "staging" in their "Name" tag
-$ blaze-ssh list staging
+$ blssh list staging
 ```
 
 ### Connecting to an Instance
 ```bash
 # Interactively select an instance to connect to from a list of instances that contain the term "production-1" in their "Name" tag
-$ blaze-ssh connect production-1
+$ blssh connect production-1
 
 # Connecting with a non default (configured in ~/.config/blaze/config.toml) private key
-$ blaze-ssh connect production-1 --key ~/.ssh/production.pem
+$ blssh connect production-1 --key ~/.ssh/production.pem
 
 # Connecting with a non default (configured in ~/.config/blaze/config.toml) user
-$ blaze-ssh connect production-1 --user ubuntu
+$ blssh connect production-1 --user ubuntu
 
 # Connecting with a non default (configured in ~/.config/blaze/config.toml) port
-$ blaze-ssh connect production-1 --port 2222
+$ blssh connect production-1 --port 2222
 
 # Connecting with a non default bastion host
-$ blaze-ssh connect production-1 --bastion "user@192.168.1.1"
+$ blssh connect production-1 --bastion "user@192.168.1.1"
 
 # Connecting with a non default (configured in ~/.config/blaze/config.toml) address type
 # Options are "public" & "private"
-$ blaze-ssh connect production-1 --address-type public
+$ blssh connect production-1 --address-type public
 
 # Connect using a custom config
-$ blaze-ssh connect production-1 --config ~/custom-config.toml
+$ blssh --config ~/custom-config.toml connect production-1
 
 # Disable use of cached instance information (stored in /tmp/blaze_ssh_cache.json)
-$ blaze-ssh connect production-1 --no-cache
+$ blssh --no-cache connect production-1
 ```
 
 

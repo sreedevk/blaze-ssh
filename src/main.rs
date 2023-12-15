@@ -22,7 +22,7 @@ async fn main() -> Result<()> {
     let cli = Opts::parse();
     match cli.clone().operation {
         opts::Operations::Connect(opts) => {
-            let config = config::Config::load(opts.clone().config)?;
+            let config = config::Config::load(cli.clone().config)?;
             let instance_set = InstanceSet::fetch(&cli).await?;
             let filtered_instance_set = instance_set.filter(opts.clone().search)?;
             let ui = Ui::new(filtered_instance_set)?;
