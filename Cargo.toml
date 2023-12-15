@@ -7,7 +7,7 @@ description = "A Configurable CLI tool that helps you ssh into aws ec2 instances
 rust-version = "1.74.0"
 repository = "https://github.com/sreedevk/blaze-ssh"
 readme = "README.md"
-keywords = ["aws", "ssh", "ec2", "terminal", "cli", "rust"]
+keywords = ["aws", "ssh", "ec2", "terminal", "cli"]
 categories = ["cli", "terminal", "aws", "ssh"]
 license = "GPL-3.0"
 
