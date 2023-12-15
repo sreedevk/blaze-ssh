@@ -101,3 +101,8 @@ $ blssh --no-cache connect production-1
 
 # Known Issues
 1. When navigating using j/k on the connect ui, the list scroll doesn't work.
+2. The behavior without a config file is untested.
+
+# Roadmap
+1. Fix known Issues
+2. Package application for distribution
