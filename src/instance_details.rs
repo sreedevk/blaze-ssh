@@ -34,10 +34,6 @@ impl InstanceSet {
         Ok(instance_set)
     }
 
-    pub fn is_empty(&self) -> bool {
-        self.instances.is_empty()
-    }
-
     pub fn is_non_selectable(&self) -> bool {
         self.instances.len() == 1
     }
