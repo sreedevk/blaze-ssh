@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
@@ -7,9 +7,9 @@ pub const CONFIG_PATH: &str = "~/.config/blaze/config.toml";
 pub const DEFAULT: &str = r#"
 # Rename this section to "config" to use this as your default config
 [config.sample]
-    private-key = "~/.ssh/tunecore1.pem"
+    private-key = ""
     default-user = "ec2-user"
-    bastion = "nil"
+    jumphost = ""
     port = 22
     address-type = "private"
 "#;
@@ -20,7 +20,7 @@ pub struct Config {
     pub default_user: Option<String>,
     #[serde(rename = "private-key")]
     pub private_key: Option<PathBuf>,
-    pub bastion: Option<String>,
+    pub jumphost: Option<String>,
     pub port: Option<u16>,
     #[serde(rename = "address-type")]
     pub address_type: Option<String>,
@@ -38,12 +38,23 @@ impl Config {
             .unwrap_or(CONFIG_PATH.to_string()))
     }
 
-    #[allow(dead_code)]
-    pub fn generate_default_config() -> Result<()> {
-        std::fs::write(
-            PathBuf::from(shellexpand::tilde(CONFIG_PATH).to_string()),
-            DEFAULT,
-        )?;
+    pub fn write_default_config() -> Result<()> {
+        let expanded_path = PathBuf::from(shellexpand::tilde(CONFIG_PATH).to_string());
+        match expanded_path.parent() {
+            Some(parent) => {
+                if !parent.exists() {
+                    std::fs::create_dir_all(parent)?;
+                }
+
+                std::fs::write(
+                    PathBuf::from(shellexpand::tilde(CONFIG_PATH).to_string()),
+                    DEFAULT,
+                )?;
+            }
+            None => {
+                return Err(anyhow!("Invalid config path"));
+            }
+        }
 
         Ok(())
     }
@@ -51,8 +62,10 @@ impl Config {
     pub fn load(path: Option<PathBuf>) -> Result<Self> {
         let config_path =
             PathBuf::from(shellexpand::tilde(&Self::get_config_path(path)?).to_string());
-        let raw_config = std::fs::read_to_string(config_path)?;
-
-        Ok(toml::from_str::<ConfigFile>(&raw_config)?.config)
+        let raw_config = std::fs::read_to_string(config_path);
+        match raw_config {
+            Ok(config) => Ok(toml::from_str::<ConfigFile>(&config)?.config),
+            Err(_e) => Err(anyhow!("Config not found at {}, Please use `blssh configure` to generate default configuration.", CONFIG_PATH)),
+        }
     }
 }

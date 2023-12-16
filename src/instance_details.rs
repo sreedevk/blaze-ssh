@@ -34,6 +34,10 @@ impl InstanceSet {
         Ok(instance_set)
     }
 
+    pub fn is_non_selectable(&self) -> bool {
+        self.instances.len() == 1
+    }
+
     pub async fn fetch(opts: &Opts) -> Result<Self> {
         match opts.no_cache {
             false => {
@@ -53,9 +57,9 @@ impl InstanceSet {
         Ok(())
     }
 
-    pub fn filter(&self, search: Option<String>) -> Result<Self> {
+    pub fn filter(&self, search: &Option<String>) -> Result<Self> {
         if search.is_none() {
-            return Self::new(self.instances.clone());
+            Self::new(self.instances.clone())
         } else {
             Self::new(
                 self.instances
