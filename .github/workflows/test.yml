@@ -1,0 +1,31 @@
+name: Lint & Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+        components: rustfmt, clippy
+        override: true
+
+    - name: Run Clippy (Linter)
+      run: cargo clippy -- -D warnings
+
+    - name: Check Code Formatting
+      run: cargo fmt -- --check
+
+    - name: Run Tests
+      run: cargo test --verbose

@@ -106,3 +106,4 @@ $ blssh --no-cache connect production-1
 # Roadmap
 1. Fix known Issues
 2. Package application for distribution
+3. If only one instance is found, connect to it directly without showing the connect ui
