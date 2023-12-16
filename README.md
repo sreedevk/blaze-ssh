@@ -18,15 +18,22 @@ Currently, the only way to install blaze is using cargo:
 $ cargo install blaze-ssh
 ```
 
+After installation, make sure to create a config file at `~/.config/blaze/config.toml`. See [Configuration](#configuration) for more details.
+You may use the `configure` command to generate a default config file.
+
+```bash
+$ blssh configure
+```
+
 ## Usage
 ```bash
-# CLI Help
 Usage: blssh [OPTIONS] <COMMAND>
 
 Commands:
-  connect  connect to an ec2 instances
-  list     list filtered ec2 instances
-  help     Print this message or the help of the given subcommand(s)
+  connect    connect to an ec2 instances
+  list       list filtered ec2 instances
+  configure  generate default config (~/.config/blssh/config.toml)
+  help       Print this message or the help of the given subcommand(s)
 
 Options:
       --no-cache         disable using cached ec2 instances list
@@ -57,7 +64,7 @@ Currently, blaze-ssh expects to find a config file at `~/.config/blaze/config.to
 [config]
 private-key = "~/.ssh/id_rsa.pem"
 default-user = "ec2-user"
-jumphost = "nil"
+jumphost = ""
 port = 22
 address-type = "private"
 ```
