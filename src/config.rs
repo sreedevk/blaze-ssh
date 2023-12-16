@@ -39,10 +39,22 @@ impl Config {
     }
 
     pub fn write_default_config() -> Result<()> {
-        std::fs::write(
-            PathBuf::from(shellexpand::tilde(CONFIG_PATH).to_string()),
-            DEFAULT,
-        )?;
+        let expanded_path = PathBuf::from(shellexpand::tilde(CONFIG_PATH).to_string());
+        match expanded_path.parent() {
+            Some(parent) => {
+                if !parent.exists() {
+                    std::fs::create_dir_all(parent)?;
+                }
+
+                std::fs::write(
+                    PathBuf::from(shellexpand::tilde(CONFIG_PATH).to_string()),
+                    DEFAULT,
+                )?;
+            }
+            None => {
+                return Err(anyhow!("Invalid config path"));
+            }
+        }
 
         Ok(())
     }
