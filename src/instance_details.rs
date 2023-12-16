@@ -55,7 +55,7 @@ impl InstanceSet {
 
     pub fn filter(&self, search: Option<String>) -> Result<Self> {
         if search.is_none() {
-            return Self::new(self.instances.clone());
+            Self::new(self.instances.clone())
         } else {
             Self::new(
                 self.instances

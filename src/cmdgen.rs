@@ -60,7 +60,7 @@ impl CommandGenerator {
             .opts
             .address_type
             .clone()
-            .unwrap_or(String::new())
+            .unwrap_or_default()
             .as_str()
         {
             "" => match self.config.address_type.clone() {
@@ -80,12 +80,12 @@ impl CommandGenerator {
     }
 
     fn user(&self) -> Result<String> {
-        match self.opts.user.clone().unwrap_or(String::new()).as_str() {
+        match self.opts.user.clone().unwrap_or_default().as_str() {
             "" => match self.config.default_user.clone() {
-                Some(default_user) => return Ok(default_user.to_string()),
-                None => return Err(anyhow::anyhow!("No username provided")),
+                Some(default_user) => Ok(default_user.to_string()),
+                None => Err(anyhow::anyhow!("No username provided")),
             },
-            username => return Ok(username.to_string()),
+            username => Ok(username.to_string()),
         }
     }
 }

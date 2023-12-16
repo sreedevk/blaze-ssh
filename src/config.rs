@@ -31,6 +31,7 @@ struct ConfigFile {
     config: Config,
 }
 
+#[allow(unused)]
 impl Config {
     pub fn get_config_path(path: Option<PathBuf>) -> Result<String> {
         Ok(path
