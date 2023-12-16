@@ -40,6 +40,9 @@ pub enum Operations {
     /// list filtered ec2 instances
     #[clap(name = "list", alias = "l")]
     List(ListOptions),
+    /// setup default config
+    #[clap(name = "configure", alias = "cfg")]
+    Configure
 }
 
 #[derive(Parser, Debug, Clone)]

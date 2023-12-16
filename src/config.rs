@@ -31,16 +31,11 @@ struct ConfigFile {
     config: Config,
 }
 
-#[allow(unused)]
 impl Config {
     pub fn get_config_path(path: Option<PathBuf>) -> Result<String> {
         Ok(path
             .and_then(|cfg_path| Some(String::from(cfg_path.to_str()?)))
             .unwrap_or(CONFIG_PATH.to_string()))
-    }
-
-    pub fn default_config() -> Result<Self> {
-        Ok(toml::from_str::<ConfigFile>(DEFAULT)?.config)
     }
 
     pub fn write_default_config() -> Result<()> {

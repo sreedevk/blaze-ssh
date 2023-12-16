@@ -49,6 +49,9 @@ async fn main() -> Result<()> {
             let filtered_instance_set = instance_set.filter(&opts.search)?;
             TableGenerator::generate(&filtered_instance_set).print();
         }
+        opts::Operations::Configure => {
+            config::Config::write_default_config()?;
+        }
     }
 
     Ok(())
