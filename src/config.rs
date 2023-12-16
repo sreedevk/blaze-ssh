@@ -53,7 +53,7 @@ impl Config {
         let raw_config = std::fs::read_to_string(config_path);
         match raw_config {
             Ok(config) => Ok(toml::from_str::<ConfigFile>(&config)?.config),
-            Err(_e) => Err(anyhow!("Config not found at {}", CONFIG_PATH)),
+            Err(_e) => Err(anyhow!("Config not found at {}, Please use `blssh configure` to generate default configuration.", CONFIG_PATH)),
         }
     }
 }
