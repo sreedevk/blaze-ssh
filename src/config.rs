@@ -9,7 +9,7 @@ pub const DEFAULT: &str = r#"
 [config.sample]
     private-key = ""
     default-user = "ec2-user"
-    bastion = ""
+    jumphost = ""
     port = 22
     address-type = "private"
 "#;
@@ -20,7 +20,7 @@ pub struct Config {
     pub default_user: Option<String>,
     #[serde(rename = "private-key")]
     pub private_key: Option<PathBuf>,
-    pub bastion: Option<String>,
+    pub jumphost: Option<String>,
     pub port: Option<u16>,
     #[serde(rename = "address-type")]
     pub address_type: Option<String>,

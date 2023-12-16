@@ -25,7 +25,7 @@ impl CommandGenerator {
             String::from("ssh -t"),
             format!("{}@{}", self.user()?, self.address()?),
             self.key()?,
-            self.jump_host()?,
+            self.jumphost()?,
         ]
         .into_iter()
         .filter(|arg| !arg.is_empty())
@@ -39,10 +39,16 @@ impl CommandGenerator {
             .stdout(std::process::Stdio::inherit()))
     }
 
-    fn jump_host(&self) -> Result<String> {
+    fn jumphost(&self) -> Result<String> {
         match self.opts.jumphost.clone() {
             Some(jumphost) => Ok(format!("-J {}", jumphost)),
-            None => Ok(String::new()),
+            None => match self.config.jumphost.clone() {
+                Some(jumphost) => match jumphost.as_str() {
+                    "" => return Ok(String::new()),
+                    jmp => Ok(format!("-J {}", jmp)),
+                },
+                None => Ok(String::new()),
+            },
         }
     }
 
@@ -89,11 +95,67 @@ mod tests {
     use super::*;
 
     #[test]
+    fn jumphost_without_opt_uses_config_opt() {
+        let config = Config {
+            default_user: None,
+            private_key: None,
+            jumphost: Some(String::from("config-jumphost")),
+            port: None,
+            address_type: None,
+        };
+        let opts = ConnectOptions {
+            user: None,
+            key: None,
+            jumphost: None,
+            address_type: None,
+            port: None,
+            search: None,
+        };
+        let instance = InstanceDetails {
+            instance_id: Some(String::from("id")),
+            instance_name: Some(String::from("name")),
+            public_ip: None,
+            private_ip: None,
+        };
+
+        let command_generator = CommandGenerator::new(&opts, config, instance).unwrap();
+        assert_eq!(command_generator.jumphost().unwrap(), "-J config-jumphost");
+    }
+
+    #[test]
+    fn jumphost_with_opt_prioritizes_opt() {
+        let config = Config {
+            default_user: None,
+            private_key: None,
+            jumphost: Some(String::from("config-jumphost")),
+            port: None,
+            address_type: None,
+        };
+        let opts = ConnectOptions {
+            user: None,
+            key: None,
+            jumphost: Some(String::from("opt-jumphost")),
+            address_type: None,
+            port: None,
+            search: None,
+        };
+        let instance = InstanceDetails {
+            instance_id: Some(String::from("id")),
+            instance_name: Some(String::from("name")),
+            public_ip: None,
+            private_ip: None,
+        };
+
+        let command_generator = CommandGenerator::new(&opts, config, instance).unwrap();
+        assert_eq!(command_generator.jumphost().unwrap(), "-J opt-jumphost");
+    }
+
+    #[test]
     fn user_with_opt_prioritizes_opt() {
         let config = Config {
             default_user: Some(String::from("default-user")),
             private_key: None,
-            bastion: None,
+            jumphost: None,
             port: None,
             address_type: None,
         };
@@ -121,7 +183,7 @@ mod tests {
         let config = Config {
             default_user: Some(String::from("default-user")),
             private_key: None,
-            bastion: None,
+            jumphost: None,
             port: None,
             address_type: None,
         };
@@ -150,7 +212,7 @@ mod tests {
         let config = Config {
             default_user: None,
             private_key: None,
-            bastion: None,
+            jumphost: None,
             port: None,
             address_type: Some(String::from("public")),
         };
@@ -178,7 +240,7 @@ mod tests {
         let config = Config {
             default_user: None,
             private_key: None,
-            bastion: None,
+            jumphost: None,
             port: None,
             address_type: None,
         };
