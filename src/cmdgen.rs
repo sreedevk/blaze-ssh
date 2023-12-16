@@ -83,7 +83,7 @@ impl CommandGenerator {
         match self.opts.user.clone().unwrap_or_default().as_str() {
             "" => match self.config.default_user.clone() {
                 Some(default_user) => Ok(default_user.to_string()),
-                None => Err(anyhow::anyhow!("No username provided")),
+                None => Err(anyhow::anyhow!("No username provided. Please use --user or configure default username in ~/.config/blssh/config.toml")),
             },
             username => Ok(username.to_string()),
         }
