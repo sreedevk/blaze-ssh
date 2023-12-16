@@ -56,13 +56,7 @@ impl CommandGenerator {
     }
 
     fn address(&self) -> Result<String> {
-        match self
-            .opts
-            .address_type
-            .clone()
-            .unwrap_or_default()
-            .as_str()
-        {
+        match self.opts.address_type.clone().unwrap_or_default().as_str() {
             "" => match self.config.address_type.clone() {
                 Some(address_type) => match address_type.as_str() {
                     "public" => Ok(self.instance.public_ip.clone().unwrap_or_default()),
