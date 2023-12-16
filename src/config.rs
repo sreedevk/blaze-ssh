@@ -38,8 +38,11 @@ impl Config {
             .unwrap_or(CONFIG_PATH.to_string()))
     }
 
-    #[allow(dead_code)]
-    pub fn generate_default_config() -> Result<()> {
+    pub fn default_config() -> Result<Self> {
+        Ok(toml::from_str::<ConfigFile>(DEFAULT)?.config)
+    }
+
+    pub fn write_default_config() -> Result<()> {
         std::fs::write(
             PathBuf::from(shellexpand::tilde(CONFIG_PATH).to_string()),
             DEFAULT,

@@ -56,32 +56,154 @@ impl CommandGenerator {
     }
 
     fn address(&self) -> Result<String> {
-        let address_type = self
+        match self
             .opts
             .address_type
             .clone()
-            .or(self.config.address_type.clone());
-
-        match address_type {
-            Some(address_type) => match address_type.as_str() {
+            .unwrap_or(String::new())
+            .as_str()
+        {
+            "" => match self.config.address_type.clone() {
+                Some(address_type) => match address_type.as_str() {
+                    "public" => Ok(self.instance.public_ip.clone().unwrap_or_default()),
+                    "private" => Ok(self.instance.private_ip.clone().unwrap_or_default()),
+                    _ => Err(anyhow::anyhow!("Invalid address type")),
+                },
+                None => Ok(self.instance.private_ip.clone().unwrap_or_default()),
+            },
+            address_type => match address_type {
                 "public" => Ok(self.instance.public_ip.clone().unwrap_or_default()),
                 "private" => Ok(self.instance.private_ip.clone().unwrap_or_default()),
                 _ => Err(anyhow::anyhow!("Invalid address type")),
             },
-            None => Ok(self.instance.private_ip.clone().unwrap_or_default()),
         }
     }
 
     fn user(&self) -> Result<String> {
-        let username = self
-            .opts
-            .user
-            .clone()
-            .or(Some(self.config.default_user.clone().unwrap()));
-
-        match username {
-            Some(username) => Ok(username),
-            None => Err(anyhow::anyhow!("No username provided")),
+        match self.opts.user.clone().unwrap_or(String::new()).as_str() {
+            "" => match self.config.default_user.clone() {
+                Some(default_user) => return Ok(default_user.to_string()),
+                None => return Err(anyhow::anyhow!("No username provided")),
+            },
+            username => return Ok(username.to_string()),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn user_with_opt_prioritizes_opt() {
+        let config = Config {
+            default_user: Some(String::from("default-user")),
+            private_key: None,
+            bastion: None,
+            port: None,
+            address_type: None,
+        };
+        let opts = ConnectOptions {
+            user: Some(String::from("opt-user")),
+            key: None,
+            jumphost: None,
+            address_type: None,
+            port: None,
+            search: None,
+        };
+        let instance = InstanceDetails {
+            instance_id: Some(String::from("id")),
+            instance_name: Some(String::from("name")),
+            public_ip: None,
+            private_ip: None,
+        };
+
+        let command_generator = CommandGenerator::new(&opts, config, instance).unwrap();
+        assert_eq!(command_generator.user().unwrap(), "opt-user");
+    }
+
+    #[test]
+    fn user_without_opt_uses_config_opt() {
+        let config = Config {
+            default_user: Some(String::from("default-user")),
+            private_key: None,
+            bastion: None,
+            port: None,
+            address_type: None,
+        };
+        let opts = ConnectOptions {
+            user: None,
+            key: None,
+            jumphost: None,
+            address_type: None,
+            port: None,
+            search: None,
+        };
+
+        let instance = InstanceDetails {
+            instance_id: Some(String::from("id")),
+            instance_name: Some(String::from("name")),
+            public_ip: None,
+            private_ip: None,
+        };
+
+        let command_generator = CommandGenerator::new(&opts, config, instance).unwrap();
+        assert_eq!(command_generator.user().unwrap(), "default-user");
+    }
+
+    #[test]
+    fn address_without_opt_uses_config_opt() {
+        let config = Config {
+            default_user: None,
+            private_key: None,
+            bastion: None,
+            port: None,
+            address_type: Some(String::from("public")),
+        };
+        let opts = ConnectOptions {
+            user: None,
+            key: None,
+            jumphost: None,
+            address_type: None,
+            port: None,
+            search: None,
+        };
+        let instance = InstanceDetails {
+            instance_id: Some(String::from("id")),
+            instance_name: Some(String::from("name")),
+            public_ip: Some(String::from("public-ip")),
+            private_ip: Some(String::from("private-ip")),
+        };
+
+        let command_generator = CommandGenerator::new(&opts, config, instance).unwrap();
+        assert_eq!(command_generator.address().unwrap(), "public-ip");
+    }
+
+    #[test]
+    fn address_with_opt_prioritizes_opt() {
+        let config = Config {
+            default_user: None,
+            private_key: None,
+            bastion: None,
+            port: None,
+            address_type: None,
+        };
+        let opts = ConnectOptions {
+            user: None,
+            key: None,
+            jumphost: None,
+            address_type: Some(String::from("public")),
+            port: None,
+            search: None,
+        };
+        let instance = InstanceDetails {
+            instance_id: Some(String::from("id")),
+            instance_name: Some(String::from("name")),
+            public_ip: Some(String::from("public-ip")),
+            private_ip: Some(String::from("private-ip")),
+        };
+
+        let command_generator = CommandGenerator::new(&opts, config, instance).unwrap();
+        assert_eq!(command_generator.address().unwrap(), "public-ip");
     }
 }
