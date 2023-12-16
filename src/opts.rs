@@ -42,7 +42,7 @@ pub enum Operations {
     List(ListOptions),
     /// setup default config
     #[clap(name = "configure", alias = "cfg")]
-    Configure
+    Configure,
 }
 
 #[derive(Parser, Debug, Clone)]
