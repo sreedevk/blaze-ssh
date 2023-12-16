@@ -40,7 +40,7 @@ pub enum Operations {
     /// list filtered ec2 instances
     #[clap(name = "list", alias = "l")]
     List(ListOptions),
-    /// setup default config
+    /// generate default config (~/.config/blssh/config.toml)
     #[clap(name = "configure", alias = "cfg")]
     Configure,
 }
