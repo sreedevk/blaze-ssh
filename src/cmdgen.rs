@@ -44,7 +44,7 @@ impl CommandGenerator {
             Some(jumphost) => Ok(format!("-J {}", jumphost)),
             None => match self.config.jumphost.clone() {
                 Some(jumphost) => match jumphost.as_str() {
-                    "" => return Ok(String::new()),
+                    "" => Ok(String::new()),
                     jmp => Ok(format!("-J {}", jmp)),
                 },
                 None => Ok(String::new()),
