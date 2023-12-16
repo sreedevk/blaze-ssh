@@ -57,7 +57,7 @@ Currently, blaze-ssh expects to find a config file at `~/.config/blaze/config.to
 [config]
 private-key = "~/.ssh/id_rsa.pem"
 default-user = "ec2-user"
-bastion = "nil"
+jumphost = "nil"
 port = 22
 address-type = "private"
 ```
@@ -85,8 +85,8 @@ $ blssh connect production-1 --user ubuntu
 # Connecting with a non default (configured in ~/.config/blaze/config.toml) port
 $ blssh connect production-1 --port 2222
 
-# Connecting with a non default bastion host
-$ blssh connect production-1 --bastion "user@192.168.1.1"
+# Connecting with a non default jumphost host
+$ blssh connect production-1 --jumphost "user@192.168.1.1"
 
 # Connecting with a non default (configured in ~/.config/blaze/config.toml) address type
 # Options are "public" & "private"
