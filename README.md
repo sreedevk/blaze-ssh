@@ -11,6 +11,9 @@ I have been using [aws-ssh](https://github.com/sreedevk/aws-ssh) for a while now
 This tool attempts to solve the problem by keeping the dependencies at a minimum and using Rust to build a single executable binary.
 A few conveniences of aws-ssh are missing, but will be added soon along with some additional features like aws-ecs support.
 
+## Dependencies
+Blaze SSH depends on ncurses to render the interactive UI. Please make sure to install the ncurses library before installing blaze-ssh.
+
 ## Installation
 Currently, the only way to install blaze is using cargo:
 
