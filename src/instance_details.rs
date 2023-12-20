@@ -107,8 +107,8 @@ impl InstanceDetails {
     pub fn display_name(&self) -> Result<String> {
         let cloned_instance = self.clone();
         Ok(format!(
-            "{:<32} | priv_ip: {:12} | pub_ip: {:>12} | {:<32}",
-            cloned_instance.instance_name.unwrap_or("None".to_string()),
+            "{:<32} | priv_ip: {:>16} | pub_ip: {:>16} | {:<32}",
+            Self::truncate_string(cloned_instance.instance_name.unwrap_or("None".to_string())),
             cloned_instance.private_ip.unwrap_or("None".to_string()),
             cloned_instance.public_ip.unwrap_or("None".to_string()),
             cloned_instance.instance_id.unwrap_or("None".to_string())
@@ -122,5 +122,13 @@ impl InstanceDetails {
             .find(|tag| tag.key == Some("Name".to_string()))
             .cloned()
             .and_then(|tag| tag.value)
+    }
+
+    fn truncate_string(input: String) -> String {
+        if input.len() <= 32 {
+            return input;
+        }
+
+        format!("{}...", &input[..29])
     }
 }
