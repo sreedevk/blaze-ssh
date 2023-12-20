@@ -10,9 +10,10 @@ use crossterm::{
 };
 
 use ratatui::{
-    prelude::{CrosstermBackend, Style, Terminal},
+    layout::Constraint,
+    prelude::*,
     style::Modifier,
-    widgets::{Block, Borders, List, ListItem},
+    widgets::{Block, Borders, List, ListItem, Padding},
     Frame,
 };
 
@@ -99,6 +100,31 @@ impl Ui {
     }
 
     fn ui(frame: &mut Frame, list: &mut StatefulList<(String, InstanceDetails)>) -> Result<()> {
+        let slices = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints([Constraint::Percentage(80), Constraint::Percentage(20)])
+            .split(frame.size());
+
+        /* render keybindings */
+        let keybindings_list_items = vec![
+            ListItem::new("j/Down: Next item"),
+            ListItem::new("k/Up: Previous item"),
+            ListItem::new("Enter: Select item"),
+            ListItem::new("q/Esc: Quit"),
+        ];
+
+        let keybindings_list = List::new(keybindings_list_items).block(
+            Block::default()
+                .borders(Borders::ALL)
+                .bg(Color::Black)
+                .fg(Color::White)
+                .padding(Padding::new(4, 1, 1, 1))
+                .title("Keybindings"),
+        );
+
+        frame.render_widget(keybindings_list, slices[1]);
+
+        /* render instances list */
         let prepared_items: Vec<ListItem> = list
             .items
             .iter()
@@ -112,15 +138,22 @@ impl Ui {
             .collect();
 
         let prepared_list = List::new(prepared_items)
-            .block(Block::default().borders(Borders::ALL).title("Instances"))
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .bg(Color::Black)
+                    .padding(Padding::new(4, 4, 1, 1))
+                    .title("Instances"),
+            )
             .highlight_style(
                 Style::default()
-                    .bg(ratatui::style::Color::LightCyan)
+                    .bg(ratatui::style::Color::DarkGray)
+                    .fg(ratatui::style::Color::White)
                     .add_modifier(Modifier::BOLD),
             )
-            .highlight_symbol(">> ");
+            .highlight_symbol(">>= ");
 
-        frame.render_stateful_widget(prepared_list, frame.size(), &mut list.state);
+        frame.render_stateful_widget(prepared_list, slices[0], &mut list.state);
 
         Ok(())
     }

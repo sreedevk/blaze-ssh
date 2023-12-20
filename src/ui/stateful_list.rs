@@ -8,8 +8,11 @@ pub struct StatefulList<T> {
 
 impl<T> StatefulList<T> {
     pub fn with_items(items: Vec<T>) -> Self {
+        let mut list_state = ListState::default();
+        list_state.select(Some(0));
+
         Self {
-            state: ListState::default(),
+            state: list_state,
             items,
         }
     }
