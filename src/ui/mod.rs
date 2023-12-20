@@ -1,5 +1,6 @@
 mod stateful_list;
 
+use anyhow::{anyhow, Result};
 use stateful_list::StatefulList;
 
 use crossterm::{
@@ -15,10 +16,7 @@ use ratatui::{
     Frame,
 };
 
-use std::{
-    io::{stdout, Result},
-    time::Duration,
-};
+use std::{io::stdout, time::Duration};
 
 use crate::instance_details::{InstanceDetails, InstanceSet};
 
@@ -71,7 +69,8 @@ impl Ui {
 
             /* Handle Events */
             match self.read_events()? {
-                BlazeUiEvent::Quit | BlazeUiEvent::Selected => {
+                BlazeUiEvent::Quit => {
+                    self.list.state.select(None);
                     disable_raw_mode()?;
                     execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
                     break;
@@ -85,12 +84,18 @@ impl Ui {
                 BlazeUiEvent::ListPrevious => {
                     self.list.previous();
                 }
+                BlazeUiEvent::Selected => {
+                    disable_raw_mode()?;
+                    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
+                    break;
+                }
             }
         }
 
-        Ok(self.list.items[self.list.state.selected().unwrap()]
-            .1
-            .clone())
+        match self.list.state.selected() {
+            Some(index) => Ok(self.list.items[index].1.clone()),
+            None => Err(anyhow!("No instance selected")),
+        }
     }
 
     fn ui(frame: &mut Frame, list: &mut StatefulList<(String, InstanceDetails)>) -> Result<()> {
@@ -100,8 +105,8 @@ impl Ui {
             .map(|(dsp_name, _item)| {
                 ListItem::new(dsp_name.clone()).style(
                     Style::default()
-                        .fg(ratatui::style::Color::Black)
-                        .bg(ratatui::style::Color::White),
+                        .fg(ratatui::style::Color::White)
+                        .bg(ratatui::style::Color::Black),
                 )
             })
             .collect();
@@ -110,7 +115,7 @@ impl Ui {
             .block(Block::default().borders(Borders::ALL).title("Instances"))
             .highlight_style(
                 Style::default()
-                    .bg(ratatui::style::Color::LightBlue)
+                    .bg(ratatui::style::Color::LightCyan)
                     .add_modifier(Modifier::BOLD),
             )
             .highlight_symbol(">> ");
