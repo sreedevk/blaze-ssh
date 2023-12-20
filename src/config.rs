@@ -5,8 +5,7 @@ use std::path::PathBuf;
 pub const CONFIG_PATH: &str = "~/.config/blaze/config.toml";
 #[allow(dead_code)]
 pub const DEFAULT: &str = r#"
-# Rename this section to "config" to use this as your default config
-[config.sample]
+[config]
     private-key = ""
     default-user = "ec2-user"
     jumphost = ""
@@ -57,6 +56,13 @@ impl Config {
         }
 
         Ok(())
+    }
+
+    pub fn read_raw(path: Option<PathBuf>) -> Result<String> {
+        let config_path =
+            PathBuf::from(shellexpand::tilde(&Self::get_config_path(path)?).to_string());
+
+        std::fs::read_to_string(config_path).map_err(|e| e.into())
     }
 
     pub fn load(path: Option<PathBuf>) -> Result<Self> {

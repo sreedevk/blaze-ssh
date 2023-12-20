@@ -13,7 +13,7 @@ use ratatui::{
     layout::Constraint,
     prelude::*,
     style::Modifier,
-    widgets::{Block, Borders, List, ListItem, Padding},
+    widgets::{Block, Borders, List, ListItem, Padding, Paragraph},
     Frame,
 };
 
@@ -33,10 +33,11 @@ enum BlazeUiEvent {
 #[derive(Debug, Clone)]
 pub struct Ui {
     list: StatefulList<(String, InstanceDetails)>,
+    config: String,
 }
 
 impl Ui {
-    pub fn new(instance_set: InstanceSet) -> Result<Self> {
+    pub fn new(instance_set: InstanceSet, config: String) -> Result<Self> {
         let list_elements = instance_set
             .instances
             .iter()
@@ -50,7 +51,7 @@ impl Ui {
 
         let list = StatefulList::with_items(list_elements);
 
-        Ok(Self { list })
+        Ok(Self { list, config })
     }
 
     pub fn run(&mut self) -> Result<InstanceDetails> {
@@ -65,7 +66,7 @@ impl Ui {
         loop {
             /* Render UI */
             terminal.draw(|frame| {
-                Self::ui(frame, &mut self.list).unwrap();
+                Self::ui(frame, &mut self.list, self.config.clone()).unwrap();
             })?;
 
             /* Handle Events */
@@ -99,11 +100,20 @@ impl Ui {
         }
     }
 
-    fn ui(frame: &mut Frame, list: &mut StatefulList<(String, InstanceDetails)>) -> Result<()> {
+    fn ui(
+        frame: &mut Frame,
+        list: &mut StatefulList<(String, InstanceDetails)>,
+        config: String,
+    ) -> Result<()> {
         let slices = Layout::default()
             .direction(Direction::Horizontal)
-            .constraints([Constraint::Percentage(80), Constraint::Percentage(20)])
+            .constraints([Constraint::Percentage(70), Constraint::Percentage(30)])
             .split(frame.size());
+
+        let dashboard_slices = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
+            .split(slices[1]);
 
         /* render keybindings */
         let keybindings_list_items = vec![
@@ -122,7 +132,18 @@ impl Ui {
                 .title("Keybindings"),
         );
 
-        frame.render_widget(keybindings_list, slices[1]);
+        frame.render_widget(keybindings_list, dashboard_slices[0]);
+
+        /* render raw config */
+        let config = Paragraph::new(config).block(
+            Block::default()
+                .borders(Borders::ALL)
+                .bg(Color::Black)
+                .fg(Color::White)
+                .title("Config")
+                .padding(Padding::new(4, 1, 1, 1)),
+        );
+        frame.render_widget(config, dashboard_slices[1]);
 
         /* render instances list */
         let prepared_items: Vec<ListItem> = list
@@ -164,8 +185,8 @@ impl Ui {
                 Event::Key(event) => match event.kind {
                     KeyEventKind::Press => match event.code {
                         KeyCode::Char('q') | KeyCode::Esc => Ok(BlazeUiEvent::Quit),
-                        KeyCode::Char('j') | KeyCode::Up => Ok(BlazeUiEvent::ListNext),
-                        KeyCode::Char('k') | KeyCode::Down => Ok(BlazeUiEvent::ListPrevious),
+                        KeyCode::Char('j') | KeyCode::Down => Ok(BlazeUiEvent::ListNext),
+                        KeyCode::Char('k') | KeyCode::Up => Ok(BlazeUiEvent::ListPrevious),
                         KeyCode::Enter => Ok(BlazeUiEvent::Selected),
                         _ => Ok(BlazeUiEvent::Noop),
                     },
