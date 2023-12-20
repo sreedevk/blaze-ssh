@@ -168,8 +168,8 @@ impl Ui {
             )
             .highlight_style(
                 Style::default()
-                    .bg(ratatui::style::Color::DarkGray)
-                    .fg(ratatui::style::Color::White)
+                    .bg(ratatui::style::Color::Green)
+                    .fg(ratatui::style::Color::Black)
                     .add_modifier(Modifier::BOLD),
             )
             .highlight_symbol(">>= ");
