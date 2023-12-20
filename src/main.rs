@@ -27,7 +27,7 @@ async fn main() -> Result<()> {
             let instance = match filtered_instance_set.is_non_selectable() {
                 true => filtered_instance_set.instances.first().unwrap().clone(),
                 false => {
-                    let ui = Ui::new(filtered_instance_set)?;
+                    let mut ui = Ui::new(filtered_instance_set)?;
                     ui.run()?
                 }
             };
