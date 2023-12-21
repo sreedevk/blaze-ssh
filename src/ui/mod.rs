@@ -127,7 +127,7 @@ impl Ui {
             Block::default()
                 .borders(Borders::ALL)
                 .bg(Color::Black)
-                .fg(Color::White)
+                .fg(Color::LightGreen)
                 .padding(Padding::new(4, 1, 1, 1))
                 .title("Keybindings"),
         );
@@ -135,14 +135,15 @@ impl Ui {
         frame.render_widget(keybindings_list, dashboard_slices[0]);
 
         /* render raw config */
-        let config = Paragraph::new(config).block(
-            Block::default()
-                .borders(Borders::ALL)
-                .bg(Color::Black)
-                .fg(Color::White)
-                .title("Config")
-                .padding(Padding::new(4, 1, 1, 1)),
-        );
+        let config = Paragraph::new(config)
+            .style(Style::default().bg(Color::Black).fg(Color::LightGreen))
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .bg(Color::Black)
+                    .title("Config")
+                    .padding(Padding::new(4, 1, 1, 1)),
+            );
         frame.render_widget(config, dashboard_slices[1]);
 
         /* render instances list */
@@ -152,7 +153,7 @@ impl Ui {
             .map(|(dsp_name, _item)| {
                 ListItem::new(dsp_name.clone()).style(
                     Style::default()
-                        .fg(ratatui::style::Color::White)
+                        .fg(ratatui::style::Color::LightGreen)
                         .bg(ratatui::style::Color::Black),
                 )
             })
@@ -163,13 +164,14 @@ impl Ui {
                 Block::default()
                     .borders(Borders::ALL)
                     .bg(Color::Black)
+                    .fg(Color::LightGreen)
                     .padding(Padding::new(4, 4, 1, 1))
                     .title("Instances"),
             )
             .highlight_style(
                 Style::default()
-                    .bg(ratatui::style::Color::Green)
-                    .fg(ratatui::style::Color::Black)
+                    .bg(ratatui::style::Color::Red)
+                    .fg(ratatui::style::Color::LightGreen)
                     .add_modifier(Modifier::BOLD),
             )
             .highlight_symbol(">>= ");
