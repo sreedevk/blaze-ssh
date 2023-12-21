@@ -1,4 +1,7 @@
-# Blaze SSH
+<h1 align="center">Blaze SSH</h1>
+<div align="center">
+  <img src="https://github.com/sreedevk/blaze-ssh/assets/36154121/074b4d46-167c-4e66-807f-9cc3c730d1f1" width="200" />
+</div>
 
 ## Description
 Blaze SSH is a configurable CLI tool that helps you ssh into amazon aws ec2 instances without leaving your terminal.
