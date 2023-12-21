@@ -110,10 +110,11 @@ $ blssh --no-cache connect production-1
 ```
 
 # Known Issues
-1. When navigating using j/k on the connect ui, the list scroll doesn't work.
+1. When navigating using j/k on the connect ui, the list scroll doesn't work. [PR #2]
 2. The behavior without a config file is untested.
 
 # Roadmap
 1. Fix known Issues
 2. Package application for distribution
 3. If only one instance is found, connect to it directly without showing the connect ui [PR #1](https://github.com/sreedevk/blaze-ssh/pull/1)
+4. Add scp support to copy files to/from instances
