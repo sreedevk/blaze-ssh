@@ -112,6 +112,7 @@ $ blssh --no-cache connect production-1
 # Known Issues
 1. When navigating using j/k on the connect ui, the list scroll doesn't work. [PR #2]
 2. The behavior without a config file is untested.
+3. The aws-sdk-ec2 library compile time is very high. (~ 2 minutes on my machine). This is a known issue (https://github.com/awslabs/aws-sdk-rust/issues/113). Once the fix has been implemented, I will update the library version to improve the compile time.
 
 # Roadmap
 1. Fix known Issues
