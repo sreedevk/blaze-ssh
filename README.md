@@ -15,10 +15,18 @@ This tool attempts to solve the problem by keeping the dependencies at a minimum
 A few conveniences of aws-ssh are missing, but will be added soon along with some additional features like aws-ecs support.
 
 ## Installation
-Currently, the only way to install blaze is using cargo:
+Currently, there are two ways to install blaze-ssh
+
+### Using Cargo
 
 ```bash
 $ cargo install blaze-ssh
+```
+
+### Using Nix Profile
+
+```bash
+$ nix profile install 'github:sreedevk/blaze-ssh?ref=main'
 ```
 
 After installation, make sure to create a config file at `~/.config/blaze/config.toml`. See [Configuration](#configuration) for more details.
