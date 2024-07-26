@@ -23,10 +23,12 @@ use crate::instance_details::{InstanceDetails, InstanceSet};
 
 #[derive(Debug, Clone)]
 enum BlazeUiEvent {
-    Quit,
-    Noop,
+    ListBottom,
     ListNext,
     ListPrevious,
+    ListTop,
+    Noop,
+    Quit,
     Selected,
 }
 
@@ -80,6 +82,12 @@ impl Ui {
                 BlazeUiEvent::Noop => {
                     continue;
                 }
+                BlazeUiEvent::ListBottom => {
+                    self.list.last();
+                }
+                BlazeUiEvent::ListTop => {
+                    self.list.first();
+                }
                 BlazeUiEvent::ListNext => {
                     self.list.next();
                 }
@@ -119,6 +127,8 @@ impl Ui {
         let keybindings_list_items = vec![
             ListItem::new("j/Down: Next item"),
             ListItem::new("k/Up: Previous item"),
+            ListItem::new("g: Top item"),
+            ListItem::new("G: Bottom item"),
             ListItem::new("Enter: Select item"),
             ListItem::new("q/Esc: Quit"),
         ];
@@ -186,6 +196,8 @@ impl Ui {
                     KeyEventKind::Press => match event.code {
                         KeyCode::Char('q') | KeyCode::Esc => Ok(BlazeUiEvent::Quit),
                         KeyCode::Char('j') | KeyCode::Down => Ok(BlazeUiEvent::ListNext),
+                        KeyCode::Char('G') => Ok(BlazeUiEvent::ListBottom),
+                        KeyCode::Char('g') => Ok(BlazeUiEvent::ListTop),
                         KeyCode::Char('k') | KeyCode::Up => Ok(BlazeUiEvent::ListPrevious),
                         KeyCode::Enter => Ok(BlazeUiEvent::Selected),
                         _ => Ok(BlazeUiEvent::Noop),
