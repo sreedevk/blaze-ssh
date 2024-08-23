@@ -20,7 +20,7 @@ Currently, there are two ways to install blaze-ssh
 ### Using Cargo
 
 ```bash
-$ cargo install blaze-ssh
+$ cargo install blaze-ssh --git https://github.com/sreedevk/blaze-ssh
 ```
 
 ### Using Nix Profile
