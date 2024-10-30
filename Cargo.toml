@@ -1,6 +1,6 @@
 [package]
 name = "blaze-ssh"
-version = "0.0.5"
+version = "0.0.6"
 edition = "2021"
 authors = ["Sreedev Kodichath <sreedevpadmakumar@gmail.com>"]
 description = "A Configurable CLI tool that helps you ssh into aws ec2 instances without leaving the terminal"

@@ -24,7 +24,7 @@ args@{
   ignoreLockHash,
 }:
 let
-  nixifiedLockHash = "1cf498cd6f709055979dc1f6366358d6cae521fb8621311dad6a81e651f0fb5c";
+  nixifiedLockHash = "09ddc838c2cd883850ea482ea04c18cb20dae8810c0c23b58a7e097293a9e424";
   workspaceSrc = if args.workspaceSrc == null then ./. else args.workspaceSrc;
   currentLockHash = builtins.hashFile "sha256" (workspaceSrc + /Cargo.lock);
   lockHashIgnored = if ignoreLockHash
@@ -46,7 +46,7 @@ in
 {
   cargo2nixVersion = "0.11.0";
   workspace = {
-    blaze-ssh = rustPackages.unknown.blaze-ssh."0.0.5";
+    blaze-ssh = rustPackages.unknown.blaze-ssh."0.0.6";
   };
   "registry+https://github.com/rust-lang/crates.io-index".addr2line."0.24.2" = overridableMkRustCrate (profileName: rec {
     name = "addr2line";
@@ -606,9 +606,9 @@ in
     src = fetchCratesIo { inherit name version; sha256 = "b048fb63fd8b5923fc5aa7b340d8e156aec7ec02f0c78fa8a6ddc2613f6f71de"; };
   });
   
-  "unknown".blaze-ssh."0.0.5" = overridableMkRustCrate (profileName: rec {
+  "unknown".blaze-ssh."0.0.6" = overridableMkRustCrate (profileName: rec {
     name = "blaze-ssh";
-    version = "0.0.5";
+    version = "0.0.6";
     registry = "unknown";
     src = fetchCrateLocal workspaceSrc;
     dependencies = {
