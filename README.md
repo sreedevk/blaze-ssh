@@ -15,18 +15,9 @@ This tool attempts to solve the problem by keeping the dependencies at a minimum
 A few conveniences of aws-ssh are missing, but will be added soon along with some additional features like aws-ecs support.
 
 ## Installation
-Currently, there are two ways to install blaze-ssh
-
-### Using Cargo
 
 ```bash
 $ cargo install blaze-ssh --git https://github.com/sreedevk/blaze-ssh
-```
-
-### Using Nix Profile
-
-```bash
-$ nix profile install 'github:sreedevk/blaze-ssh?ref=main'
 ```
 
 After installation, make sure to create a config file at `~/.config/blaze/config.toml`. See [Configuration](#configuration) for more details.
@@ -43,6 +34,7 @@ Usage: blssh [OPTIONS] <COMMAND>
 Commands:
   connect    connect to an ec2 instances
   list       list filtered ec2 instances
+  print      Print SSH Command
   configure  generate default config (~/.config/blssh/config.toml)
   help       Print this message or the help of the given subcommand(s)
 
@@ -52,8 +44,6 @@ Options:
   -h, --help             Print help
 
 # Connection Opts
-connect to an ec2 instances
-
 Usage: blssh connect [OPTIONS] [SEARCH]
 
 Arguments:
@@ -115,6 +105,11 @@ $ blssh --config ~/custom-config.toml connect production-1
 
 # Disable use of cached instance information (stored in /tmp/blaze_ssh_cache.json)
 $ blssh --no-cache connect production-1
+```
+### Printing The SSH Command to Connect to an Instance
+
+```bash
+$ blssh print production-1
 ```
 
 # Known Issues

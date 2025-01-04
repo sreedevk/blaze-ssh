@@ -10,44 +10,67 @@ mod ui;
 
 use std::process::Command;
 
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use clap::Parser;
 use instance_details::InstanceSet;
 use opts::Opts;
 use tablegen::TableGenerator;
 use ui::Ui;
 
+fn gencmd(
+    opts: opts::ConnectOptions,
+    cli: Opts,
+    instance_set: InstanceSet,
+    cmd: &mut Command,
+) -> Result<&mut Command> {
+    let filtered_instance_set = instance_set.filter(&opts.search)?;
+    let instance = match filtered_instance_set.is_non_selectable() {
+        true => filtered_instance_set.instances.first().unwrap().clone(),
+        false => {
+            let mut ui = Ui::new(
+                filtered_instance_set,
+                config::Config::read_raw(cli.clone().config)?,
+            )?;
+
+            ui.run()?
+        }
+    };
+
+    if instance.is_empty() {
+        eprintln!("No instance found");
+        return Err(anyhow!("No Instance Found"));
+    }
+
+    /* run ssh */
+    let config = config::Config::load(cli.clone().config)?;
+    let command_generator = cmdgen::CommandGenerator::new(&opts, config, instance)?;
+    command_generator.generate(cmd)
+}
+
 #[tokio::main]
 async fn main() -> Result<()> {
     let cli = Opts::parse();
     let instance_set = InstanceSet::fetch(&cli).await?;
-    match cli.clone().operation {
+    let operation = cli.operation.clone();
+    match operation.clone() {
         opts::Operations::Connect(opts) => {
-            let filtered_instance_set = instance_set.filter(&opts.search)?;
-            let instance = match filtered_instance_set.is_non_selectable() {
-                true => filtered_instance_set.instances.first().unwrap().clone(),
-                false => {
-                    let mut ui = Ui::new(
-                        filtered_instance_set,
-                        config::Config::read_raw(cli.clone().config)?,
-                    )?;
-
-                    ui.run()?
-                }
-            };
-
-            if instance.is_empty() {
-                eprintln!("No instance found");
-                return Ok(());
-            }
-
-            /* run ssh */
-            let config = config::Config::load(cli.clone().config)?;
-            let command_generator = cmdgen::CommandGenerator::new(&opts, config, instance)?;
             let mut command = Command::new("sh");
-            let ssh_command = command_generator.generate(&mut command)?;
-
-            ssh_command.status()?;
+            if let Ok(cmd) = gencmd(opts, cli, instance_set, &mut command) {
+                cmd.status()?;
+            }
+        }
+        opts::Operations::Print(opts) => {
+            let mut command = Command::new("sh");
+            if let Ok(cmd) = gencmd(opts, cli, instance_set, &mut command) {
+                println!(
+                    "{}",
+                    cmd.get_args()
+                        .last()
+                        .unwrap_or_default()
+                        .to_str()
+                        .unwrap_or_default()
+                );
+            }
         }
         opts::Operations::List(opts) => {
             let filtered_instance_set = instance_set.filter(&opts.search)?;
