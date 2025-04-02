@@ -22,7 +22,7 @@ fn gencmd(
     cli: Opts,
     instance_set: InstanceSet,
     cmd: &mut Command,
-) -> Result<&mut Command> {
+) -> Result<()> {
     let filtered_instance_set = instance_set.filter(&opts.search)?;
     let instance = match filtered_instance_set.is_non_selectable() {
         true => filtered_instance_set.instances.first().unwrap().clone(),
@@ -43,8 +43,9 @@ fn gencmd(
 
     /* run ssh */
     let config = config::Config::load(cli.clone().config)?;
-    let command_generator = cmdgen::CommandGenerator::new(&opts, config, instance)?;
-    command_generator.generate(cmd)
+    cmdgen::CommandGenerator::new(&opts, config, instance)?.generate(cmd)?;
+
+    Ok(())
 }
 
 #[tokio::main]
@@ -55,16 +56,17 @@ async fn main() -> Result<()> {
     match operation.clone() {
         opts::Operations::Connect(opts) => {
             let mut command = Command::new("sh");
-            if let Ok(cmd) = gencmd(opts, cli, instance_set, &mut command) {
-                cmd.status()?;
+            if gencmd(opts, cli, instance_set, &mut command).is_ok() {
+                command.status()?;
             }
         }
         opts::Operations::Print(opts) => {
             let mut command = Command::new("sh");
-            if let Ok(cmd) = gencmd(opts, cli, instance_set, &mut command) {
+            if gencmd(opts, cli, instance_set, &mut command).is_ok() {
                 println!(
                     "{}",
-                    cmd.get_args()
+                    command
+                        .get_args()
                         .last()
                         .unwrap_or_default()
                         .to_str()
