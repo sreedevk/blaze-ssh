@@ -1,10 +1,10 @@
 [package]
 name = "blaze-ssh"
-version = "0.0.7"
+version = "0.0.8"
 edition = "2021"
-authors = ["Sreedev Kodichath <sreedevpadmakumar@gmail.com>"]
+authors = ["Sreedev Kodichath <sreedev@icloud.com>"]
 description = "A Configurable CLI tool that helps you ssh into aws ec2 instances without leaving the terminal"
-rust-version = "1.78.0"
+rust-version = "1.90.0"
 repository = "https://github.com/sreedevk/blaze-ssh"
 readme = "README.md"
 keywords = ["aws", "ssh", "ec2", "terminal", "cli"]
